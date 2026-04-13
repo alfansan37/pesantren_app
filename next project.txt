@@ -1,0 +1,2 @@
+memperbaiki notif "tidak boleh menggunakan nis yang sama"
+menambahkan aksi mengeluarkan santri menjadi alumni
