@@ -1,5 +1,5 @@
 <?php
-// Proses tambah, edit, hapus
+// Proses tambah, edit, hapus (sama seperti sebelumnya, tidak perlu diubah)
 $message = ''; $type = '';
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
     if ($_POST['action'] == 'create') {
@@ -16,32 +16,44 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
         $message = "Santri berhasil dihapus"; $type = "success";
     }
 }
+// Ambil semua data santri
 $santri = $pdo->query("SELECT * FROM santri ORDER BY id DESC")->fetchAll();
 ?>
 <h1 class="mb-4">Manajemen Santri</h1>
-<?php if($message): ?><div class="alert alert-<?= $type ?>"><?= $message ?></div><?php endif; ?>
+<?php if($message): ?><div class="alert alert-<?= $type ?> alert-dismissible fade show" role="alert"><?= $message ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div><?php endif; ?>
 <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#modalSantri" onclick="resetForm()">+ Tambah Santri</button>
 <div class="table-responsive">
-    <table class="table table-bordered table-striped">
-        <thead class="table-dark"><tr><th>ID</th><th>NIS</th><th>Nama</th><th>Alamat</th><th>Tgl Masuk</th><th>Orang Tua</th><th>No HP Orang Tua</th><th>Aksi</th></tr></thead>
+    <table id="tableSantri" class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th><th>NIS</th><th>Nama</th><th>Alamat</th><th>Tgl Masuk</th><th>Orang Tua</th><th>No HP Orang Tua</th><th>Aksi</th>
+            </tr>
+        </thead>
         <tbody>
             <?php foreach($santri as $s): ?>
             <tr>
-                <td><?= $s['id'] ?></td><td><?= htmlspecialchars($s['nis']) ?></td><td><?= htmlspecialchars($s['nama']) ?></td>
-                <td><?= htmlspecialchars($s['alamat']) ?></td><td><?= $s['tanggal_masuk'] ?></td><td><?= htmlspecialchars($s['nama_orang_tua']) ?></td>
+                <td><?= $s['id'] ?></td>
+                <td><?= htmlspecialchars($s['nis']) ?></td>
+                <td><?= htmlspecialchars($s['nama']) ?></td>
+                <td><?= htmlspecialchars($s['alamat']) ?></td>
+                <td><?= $s['tanggal_masuk'] ?></td>
+                <td><?= htmlspecialchars($s['nama_orang_tua']) ?></td>
                 <td><?= htmlspecialchars($s['nomer_hp_ortu']) ?></td>
                 <td>
-                    <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#modalSantri" onclick="editSantri(<?= htmlspecialchars(json_encode($s)) ?>)">Edit</button>
+                    <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#modalSantri" onclick='editSantri(<?= json_encode($s) ?>)'>Edit</button>
                     <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#modalDelete" onclick="setDelete(<?= $s['id'] ?>)">Hapus</button>
                 </td>
             </tr>
             <?php endforeach; ?>
+            <?php if(count($santri)==0): ?>
+            <tr><td colspan="8" class="text-center">Belum ada data santri</td></tr>
+            <?php endif; ?>
         </tbody>
     </table>
 </div>
 
-<!-- Modal Form -->
-<div class="modal fade" id="modalSantri"><div class="modal-dialog"><div class="modal-content">
+<!-- Modal Form Tambah/Edit Santri -->
+<div class="modal fade" id="modalSantri" data-bs-backdrop="static"><div class="modal-dialog"><div class="modal-content">
     <form method="POST"><div class="modal-header"><h5 class="modal-title" id="modalTitle">Tambah Santri</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
     <div class="modal-body">
         <input type="hidden" name="action" id="action" value="create"><input type="hidden" name="id" id="id">
@@ -56,16 +68,38 @@ $santri = $pdo->query("SELECT * FROM santri ORDER BY id DESC")->fetchAll();
     </form>
 </div></div></div>
 
-<!-- Modal Hapus -->
+<!-- Modal Konfirmasi Hapus -->
 <div class="modal fade" id="modalDelete"><div class="modal-dialog"><div class="modal-content">
     <form method="POST"><div class="modal-header"><h5 class="modal-title">Konfirmasi Hapus</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-    <div class="modal-body"><input type="hidden" name="action" value="delete"><input type="hidden" name="id" id="delete_id"><p>Yakin hapus data ini?</p></div>
+    <div class="modal-body"><input type="hidden" name="action" value="delete"><input type="hidden" name="id" id="delete_id"><p>Yakin ingin menghapus data ini?</p></div>
     <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button><button type="submit" class="btn btn-danger">Hapus</button></div>
     </form>
 </div></div></div>
 
 <script>
-function resetForm() { document.getElementById('action').value='create'; document.getElementById('modalTitle').innerText='Tambah Santri'; document.getElementById('formSantri')?.reset(); document.getElementById('id').value=''; }
-function editSantri(data) { document.getElementById('action').value='edit'; document.getElementById('modalTitle').innerText='Edit Santri'; document.getElementById('id').value=data.id; document.getElementById('nis').value=data.nis; document.getElementById('nama').value=data.nama; document.getElementById('alamat').value=data.alamat; document.getElementById('tanggal_masuk').value=data.tanggal_masuk; document.getElementById('nama_orang_tua').value=data.nama_orang_tua; document.getElementById('nomer_hp_ortu').value=data.nomer_hp_ortu; }
-function setDelete(id) { document.getElementById('delete_id').value=id; }
+function resetForm() { 
+    document.getElementById('action').value = 'create'; 
+    document.getElementById('modalTitle').innerText = 'Tambah Santri'; 
+    document.getElementById('id').value = ''; 
+    document.getElementById('nis').value = ''; 
+    document.getElementById('nama').value = ''; 
+    document.getElementById('alamat').value = ''; 
+    document.getElementById('tanggal_masuk').value = ''; 
+    document.getElementById('nama_orang_tua').value = ''; 
+    document.getElementById('nomer_hp_ortu').value = ''; 
+}
+function editSantri(data) { 
+    document.getElementById('action').value = 'edit'; 
+    document.getElementById('modalTitle').innerText = 'Edit Santri'; 
+    document.getElementById('id').value = data.id; 
+    document.getElementById('nis').value = data.nis; 
+    document.getElementById('nama').value = data.nama; 
+    document.getElementById('alamat').value = data.alamat; 
+    document.getElementById('tanggal_masuk').value = data.tanggal_masuk; 
+    document.getElementById('nama_orang_tua').value = data.nama_orang_tua; 
+    document.getElementById('nomer_hp_ortu').value = data.nomer_hp_ortu; 
+}
+function setDelete(id) { 
+    document.getElementById('delete_id').value = id; 
+}
 </script>
