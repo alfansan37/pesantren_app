@@ -14,22 +14,41 @@
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="index.php?page=dashboard">
-                <i class="fas fa-mosque"></i> Manajemen Pesantren
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="index.php?page=dashboard">Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link" href="index.php?page=santri">Santri</a></li>
-                    <li class="nav-item"><a class="nav-link" href="index.php?page=ustadz">Ustadz</a></li>
-                    <li class="nav-item"><a class="nav-link" href="index.php?page=alumni">Alumni</a></li>
-                </ul>
-            </div>
+
+<div class="d-flex" id="wrapper">
+    <!-- Sidebar -->
+    <div class="bg-primary text-white" id="sidebar-wrapper">
+        <div class="sidebar-heading text-center py-4">
+            <i class="fas fa-mosque fa-2x"></i>
+            <h5 class="mt-2">Manajemen Pesantren</h5>
         </div>
-    </nav>
-    <div class="container mt-4">
+        <div class="list-group list-group-flush">
+            <a href="index.php?page=dashboard" class="list-group-item list-group-item-action bg-primary text-white <?= ($page == 'dashboard') ? 'active' : '' ?>">
+                <i class="fas fa-tachometer-alt"></i> Dashboard
+            </a>
+            <a href="index.php?page=santri" class="list-group-item list-group-item-action bg-primary text-white <?= ($page == 'santri') ? 'active' : '' ?>">
+                <i class="fas fa-user-graduate"></i> Santri
+            </a>
+            <a href="index.php?page=ustadz" class="list-group-item list-group-item-action bg-primary text-white <?= ($page == 'ustadz') ? 'active' : '' ?>">
+                <i class="fas fa-chalkboard-user"></i> Ustadz
+            </a>
+            <a href="index.php?page=alumni" class="list-group-item list-group-item-action bg-primary text-white <?= ($page == 'alumni') ? 'active' : '' ?>">
+                <i class="fas fa-users"></i> Alumni
+            </a>
+        </div>
+    </div>
+    <!-- Page Content -->
+    <div id="page-content-wrapper">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+            <div class="container-fluid">
+                <button class="btn btn-primary" id="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="ms-auto">
+                    <span class="navbar-text">
+                        <i class="fas fa-calendar-alt"></i> <?= date('d F Y') ?>
+                    </span>
+                </div>
+            </div>
+        </nav>
+        <div class="container-fluid px-4 py-3">
